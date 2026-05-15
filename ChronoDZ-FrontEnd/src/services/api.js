@@ -1,4 +1,8 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
+if (!API_URL) {
+  throw new Error("VITE_API_URL est manquante");
+}
 
 const TOKEN_KEY = "chrono_token";
 const USER_KEY = "chrono_user";
