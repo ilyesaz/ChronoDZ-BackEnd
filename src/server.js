@@ -10,7 +10,21 @@ dotenv.config();
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(cors());
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("Origine non autorisée par CORS"));
+    },
+  })
+);
+
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "super_secret";
@@ -581,7 +595,4 @@ app.get("/api/seed", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`✅ Serveur Backend démarré sur http://localhost:${PORT}`);
-});
+export default app;
